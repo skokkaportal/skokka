@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skokka - Post Free Classified Ads</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Skokka</div>
+        <nav>
+            <button id="loginNavBtn" onclick="openLoginModal()">Admin Login</button>
+            <button id="logoutNavBtn" onclick="logoutAdmin()" style="display:none;">Logout Admin</button>
+        </nav>
+    </header>
+
+    <!-- అడ్మిన్ లాగిన్ పాప్-అప్ (Modal) -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+            <button onclick="loginAdmin()">Login</button>
+            <p id="loginError" style="color:red; display:none;">Incorrect Password!</p>
+        </div>
+    </div>
+
+    <main>
+        <!-- యాడ్ పోస్ట్ చేసే ఫామ్ -->
+        <section class="ad-form-section">
+            <h2>Post a New Ad</h2>
+            <form id="adForm">
+                <input type="text" id="adTitle" placeholder="Ad Title (e.g., iPhone 13 for Sale)" required>
+                <textarea id="adDesc" placeholder="Ad Description / Details" rows="4" required></textarea>
+                <input type="text" id="adContact" placeholder="Contact Number or Email" required>
+                <button type="submit">Publish Ad</button>
+            </form>
+        </section>
+
+        <!-- యాడ్స్ డిస్ప్లే ఏరియా -->
+        <section class="ads-display-section">
+            <h2>Recent Advertisements</h2>
+            <div id="adsContainer">
+                <!-- Ads will load here via JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
