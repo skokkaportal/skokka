@@ -1,8 +1,6 @@
-// LocalStorage ఉపయోగించి రీఫ్రెష్ చేసినా డేటా పోకుండా సేవ్ చేస్తాం
 let adsList = JSON.parse(localStorage.getItem('skokka_ads')) || [];
 let isAdminLoggedIn = false;
 
-// పేజీ లోడ్ అవ్వగానే పాత యాడ్స్ చూపిస్తుంది
 window.onload = function() {
     displayAds();
 };
@@ -17,17 +15,14 @@ function closeLoginModal() {
     document.getElementById('loginError').style.display = 'none';
 }
 
-// అడ్మిన్ లాగిన్ ఫంక్షన్ (ఇక్కడ మీ పాస్‌వర్డ్ సెట్ చేసుకోండి)
 function loginAdmin() {
     const passwordInput = document.getElementById('adminPassword').value;
-    
-    // ఇక్కడ "admin123" కు బదులు మీకు నచ్చిన పాస్‌వర్డ్ పెట్టుకోవచ్చు
     if (passwordInput === "admin123") {
         isAdminLoggedIn = true;
         document.getElementById('loginNavBtn').style.display = 'none';
         document.getElementById('logoutNavBtn').style.display = 'block';
         closeLoginModal();
-        displayAds(); // డిలీట్ బటన్లు చూపించడానికి రీ-లోడ్
+        displayAds();
     } else {
         document.getElementById('loginError').style.display = 'block';
     }
@@ -40,28 +35,50 @@ function logoutAdmin() {
     displayAds();
 }
 
-// కొత్త యాడ్ సబ్మిషన్
+// కొత్త యాడ్ సлизации
 document.getElementById('adForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const title = document.getElementById('adTitle').value;
     const desc = document.getElementById('adDesc').value;
     const contact = document.getElementById('adContact').value;
+    const imageFile = document.getElementById('adImage').files[0]; // మొదటి ఫైల్ తీసుకుంటుంది
 
     const newAd = {
         id: Date.now(),
         title: title,
         desc: desc,
-        contact: contact
+        contact: contact,
+        image: ""
     };
 
-    adsList.push(newAd);
-    localStorage.setItem('skokka_ads', JSON.stringify(adsList)); // బ್ರౌజర్‌లో సేవ్ అవుతుంది
-    document.getElementById('adForm').reset();
-    displayAds();
+    // ఒకవేళ యూజర్ ఫోటో సెలెక్ట్ చేస్తే
+    if (imageFile) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            newAd.image = reader.result; // ఫోటోను టెక్స్ట్ డేటాగా మారుస్తుంది
+            saveAndDisplay(newAd);
+        }
+        reader.readAsDataURL(imageFile);
+    } else {
+        saveAndDisplay(newAd);
+    }
 });
 
-// యాడ్స్ డిస్ప్లే చేయడం (కొత్త కలర్‌ఫుల్ స్టైల్‌తో)
+function saveAndDisplay(newAd) {
+    adsList.push(newAd);
+    try {
+        localStorage.setItem('skokka_ads', JSON.stringify(adsList));
+    } catch (error) {
+        alert("Image size is too large! Please upload a smaller image.");
+        adsList.pop();
+        return;
+    }
+    document.getElementById('adForm').reset();
+    displayAds();
+}
+
+// యాడ్స్ డిస్ప్లే చేయడం
 function displayAds() {
     const container = document.getElementById('adsContainer');
     container.innerHTML = '';
@@ -76,18 +93,23 @@ function displayAds() {
         adCard.className = 'ad-card';
 
         let deleteBtnHtml = '';
-        // అడ్మిన్ లాగిన్ అయితేనే డిలీట్ బటన్ వస్తుంది
         if (isAdminLoggedIn) {
             deleteBtnHtml = `<button class="delete-btn" onclick="deleteAd(${ad.id})">Delete</button>`;
         }
 
-        // ఇక్కడ మనం ఫోన్ నంబర్ పక్కన చిన్న 📞 బొమ్మ (Icon) అందంగా కనిపించేలా మార్చాం
+        // ఫోటో ఉంటే చూపించు, లేదంటే వదిలేయ్
+        let imageHtml = '';
+        if (ad.image) {
+            imageHtml = `<img src="${ad.image}" alt="Ad Image" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:15px;">`;
+        }
+
         adCard.innerHTML = `
             <div>
+                ${imageHtml}
                 <h3>${ad.title}</h3>
                 <p>${ad.desc}</p>
             </div>
-            <div>
+            <div style="margin-top: 15px;">
                 <span class="contact-info">📞 ${ad.contact}</span>
             </div>
             ${deleteBtnHtml}
@@ -96,7 +118,6 @@ function displayAds() {
     });
 }
 
-// అడ్మిన్ యాడ్ డిలీట్ చేయడం
 function deleteAd(id) {
     adsList = adsList.filter(ad => ad.id !== id);
     localStorage.setItem('skokka_ads', JSON.stringify(adsList));
