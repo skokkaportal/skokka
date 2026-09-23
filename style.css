@@ -1,101 +1,209 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7f9fc;
-    color: #333;
+/* ప్రొఫెషనల్ & మోడ్రన్ కలర్ థీమ్ */
+:root {
+    --primary-color: #ff4757;    /* బ్రాండ్ రెడ్ */
+    --secondary-color: #2f3542;  /* డార్క్ గ్రే */
+    --accent-color: #2ed573;     /* సక్సెస్ గ్రీన్ */
+    --bg-color: #f1f2f6;         /* లైట్ బ్యాక్‌గ్రౌండ్ */
+    --card-bg: #ffffff;
+    --text-color: #333333;
 }
 
+body {
+    font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* హెడర్ డిజైన్ */
 header {
-    background-color: #ff4757;
+    background: linear-gradient(135deg, var(--primary-color), #ff6b81);
     color: white;
-    padding: 15px 30px;
+    padding: 15px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .logo {
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 header button {
     background-color: white;
-    color: #ff4757;
-    font-weight: bold;
+    color: var(--primary-color);
+    font-weight: 700;
     border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 25px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+header button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* మెయిన్ కంటెంట్ లేఅవుట్ */
 main {
-    max-width: 900px;
-    margin: 30px auto;
+    max-width: 1000px;
+    margin: 40px auto;
     padding: 0 20px;
 }
 
-.ad-form-section, .ads-display-section {
-    background: white;
-    padding: 25px;
-    margin-bottom: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+/* యాడ్ ఫామ్ సెక్షన్ */
+.ad-form-section {
+    background: var(--card-bg);
+    padding: 30px;
+    margin-bottom: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-top: 5px solid var(--primary-color);
 }
 
 h2 {
     margin-top: 0;
-    color: #2f3542;
-    border-bottom: 2px solid #f1f2f6;
-    padding-bottom: 10px;
+    color: var(--secondary-color);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 form input, form textarea {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+    padding: 14px;
+    margin: 12px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     box-sizing: border-box;
+    font-size: 15px;
+    transition: all 0.3s;
+    background-color: #fafafa;
+}
+
+form input:focus, form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(255, 71, 87, 0.15);
 }
 
 form button {
-    background-color: #2ed573;
+    background: linear-gradient(135deg, var(--accent-color), #26af5f);
     color: white;
     font-size: 16px;
+    font-weight: 700;
     border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
+    padding: 14px;
+    border-radius: 8px;
     cursor: pointer;
     width: 100%;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
 }
 
+form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(46, 213, 115, 0.4);
+}
+
+/* యాడ్స్ డిస్ప్లే గ్రిడ్ లేఅవుట్ (Professional Layout) */
+.ads-display-section {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+#adsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* యాడ్ కార్డ్ డిజైన్ */
 .ad-card {
-    background: #fff;
-    border-left: 5px solid #ff4757;
-    padding: 20px;
-    margin-top: 15px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.04);
     position: relative;
+    transition: all 0.3s ease;
+    border: 1px solid #eef0f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
+.ad-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-color: var(--primary-color);
+}
+
+.ad-card h3 {
+    margin: 0 0 12px 0;
+    color: var(--secondary-color);
+    font-size: 19px;
+    font-weight: 700;
+    padding-right: 40px; /* డిలీట్ బటన్ కోసం స్పేస్ */
+}
+
+.ad-card p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+.ad-card .contact-info {
+    background-color: #fff0f2;
+    color: var(--primary-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: auto;
+}
+
+/* మోడ్రన్ డిలీట్ బటన్ */
 .delete-btn {
-    background-color: #ff6b6b;
-    color: white;
-    border: none;
+    background-color: #fff0f0;
+    color: #ff4757;
+    border: 1px solid #ffcccc;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     position: absolute;
-    right: 20px;
-    top: 20px;
+    right: 15px;
+    top: 15px;
     cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
-/* Modal Styling */
+.delete-btn:hover {
+    background-color: #ff4757;
+    color: white;
+}
+
+/* అడ్మిన్ లాగిన్ పాప్-అప్ (Modal) */
 .modal {
     display: none;
     position: fixed;
@@ -104,38 +212,51 @@ form button {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
     background-color: white;
-    margin: 15% auto;
-    padding: 30px;
-    width: 300px;
-    border-radius: 8px;
+    margin: 12% auto;
+    padding: 35px 30px;
+    width: 320px;
+    border-radius: 16px;
     text-align: center;
     position: relative;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h2 {
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
 .modal-content input {
-    width: 100%;
-    padding: 10px;
-    margin: 15px 0;
+    margin-bottom: 20px;
 }
 
 .modal-content button {
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    width: 100%;
-    cursor: pointer;
+    background: linear-gradient(135deg, var(--primary-color), #ff6b81);
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
 }
 
 .close {
     position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 24px;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    color: #aaa;
     cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: var(--primary-color);
 }
