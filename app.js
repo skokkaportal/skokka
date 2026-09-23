@@ -22,7 +22,7 @@ function loginAdmin() {
     const passwordInput = document.getElementById('adminPassword').value;
     
     // ఇక్కడ "admin123" కు బదులు మీకు నచ్చిన పాస్‌వర్డ్ పెట్టుకోవచ్చు
-    if (passwordInput === "Kothakota123") {
+    if (passwordInput === "admin123") {
         isAdminLoggedIn = true;
         document.getElementById('loginNavBtn').style.display = 'none';
         document.getElementById('logoutNavBtn').style.display = 'block';
@@ -56,18 +56,18 @@ document.getElementById('adForm').addEventListener('submit', function(e) {
     };
 
     adsList.push(newAd);
-    localStorage.setItem('skokka_ads', JSON.stringify(adsList)); // బ్రౌజర్‌లో సేవ్ అవుతుంది
+    localStorage.setItem('skokka_ads', JSON.stringify(adsList)); // బ್ರౌజర్‌లో సేవ్ అవుతుంది
     document.getElementById('adForm').reset();
     displayAds();
 });
 
-// యాడ్స్ డిస్ప్లే చేయడం
+// యాడ్స్ డిస్ప్లే చేయడం (కొత్త కలర్‌ఫుల్ స్టైల్‌తో)
 function displayAds() {
     const container = document.getElementById('adsContainer');
     container.innerHTML = '';
 
     if (adsList.length === 0) {
-        container.innerHTML = '<p style="color:#777;">No ads published yet. Be the first to post!</p>';
+        container.innerHTML = '<p style="color:#777; grid-column: 1/-1; text-align: center;">No ads published yet. Be the first to post!</p>';
         return;
     }
 
@@ -81,10 +81,15 @@ function displayAds() {
             deleteBtnHtml = `<button class="delete-btn" onclick="deleteAd(${ad.id})">Delete</button>`;
         }
 
+        // ఇక్కడ మనం ఫోన్ నంబర్ పక్కన చిన్న 📞 బొమ్మ (Icon) అందంగా కనిపించేలా మార్చాం
         adCard.innerHTML = `
-            <h3>${ad.title}</h3>
-            <p>${ad.desc}</p>
-            <p><strong>Contact Info:</strong> ${ad.contact}</p>
+            <div>
+                <h3>${ad.title}</h3>
+                <p>${ad.desc}</p>
+            </div>
+            <div>
+                <span class="contact-info">📞 ${ad.contact}</span>
+            </div>
             ${deleteBtnHtml}
         `;
         container.appendChild(adCard);
