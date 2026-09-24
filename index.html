@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skokka - Post Free Classified Ads</title>
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=7">
     
     <!-- SEO & Google Verification Tags -->
     <meta name="description" content="Skokka - Post free classified ads online. Buy, sell, and find services near you on Skokka. Fast, easy, and 100% free classifieds website.">
@@ -12,10 +12,10 @@
     <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="ecfJROAx6B6sUJdC8uL6zLw6p95150wG9k3R8fG5Kms" />
 
-    <!-- Firebase Connection & Logic (Combined for 100% Success) -->
+    <!-- Firebase Connection & Logic -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://gstatic.com";
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -30,7 +30,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global Variables for Admin
         window.isAdminLoggedIn = false;
 
         // Display Ads Function
@@ -39,8 +38,7 @@
             container.innerHTML = '';
 
             try {
-                const q = query(collection(db, "ads"), orderBy("createdAt", "desc"));
-                const querySnapshot = await getDocs(q);
+                const querySnapshot = await getDocs(collection(db, "ads"));
 
                 if (querySnapshot.empty) {
                     container.innerHTML = '<p style="color:#777; grid-column: 1/-1; text-align: center;">No ads published yet. Be the first to post!</p>';
@@ -89,7 +87,7 @@
             const title = document.getElementById('adTitle').value;
             const desc = document.getElementById('adDesc').value;
             const contact = document.getElementById('adContact').value;
-            const imageFile = document.getElementById('adImage').files[0];
+            const imageFile = document.getElementById('adImage').files[0]; // కరెక్ట్ ఫైల్ ఇండెక్స్
 
             let base64Image = "";
 
@@ -111,8 +109,7 @@
                     title: title,
                     desc: desc,
                     contact: contact,
-                    image: image,
-                    createdAt: Date.now()
+                    image: image
                 });
                 document.getElementById('adForm').reset();
                 displayAds();
@@ -158,7 +155,6 @@
             displayAds();
         }
 
-        // Load Ads on Startup
         window.onload = displayAds;
     </script>
 </head>
