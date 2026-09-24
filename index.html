@@ -4,37 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skokka - Post Free Classified Ads</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     
     <!-- SEO & Google Verification Tags -->
     <meta name="description" content="Skokka - Post free classified ads online. Buy, sell, and find services near you on Skokka. Fast, easy, and 100% free classifieds website.">
     <meta name="keywords" content="skokka, skokka ads, free classifieds, post free ads, buy and sell online, local ads">
     <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="ecfJROAx6B6sUJdC8uL6zLw6p95150wG9k3R8fG5Kms" />
+
+    <!-- Firebase Connection & Logic (Combined for 100% Success) -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://gstatic.com";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDyqmvAi6ue3cgoEAVYAKGgpWxCXGJDGxc",
+            authDomain: "://firebaseapp.com",
+            projectId: "skokka-fe09b",
+            storageBucket: "skokka-fe09b.firebasestorage.app",
+            messagingSenderId: "412341572011",
+            appId: "1:412341572011:web:d01edb3e9571079762c2ee"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Global Variables for Admin
+        window.isAdminLoggedIn = false;
+
+        // Display Ads Function
+        async function displayAds() {
+            const container = document.getElementById('adsContainer');
+            container.innerHTML = '';
+
+            try {
+                const q = query(collection(db, "ads"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="color:#777; grid-column: 1/-1; text-align: center;">No ads published yet. Be the first to post!</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((res) => {
+                    const ad = res.data();
+                    const adId = res.id;
+
+                    const adCard = document.createElement('div');
+                    adCard.className = 'ad-card';
+
+                    let deleteBtnHtml = '';
+                    if (window.isAdminLoggedIn) {
+                        deleteBtnHtml = `<button class="delete-btn" onclick="window.deleteAd('${adId}')">Delete</button>`;
+                    }
+
+                    let imageHtml = '';
+                    if (ad.image) {
+                        imageHtml = `<img src="${ad.image}" alt="Ad Image" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:15px;">`;
+                    }
+
+                    adCard.innerHTML = `
+                        <div>
+                            ${imageHtml}
+                            <h3>${ad.title}</h3>
+                            <p>${ad.desc}</p>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <span class="contact-info">📞 ${ad.contact}</span>
+                        </div>
+                        ${deleteBtnHtml}
+                    `;
+                    container.appendChild(adCard);
+                });
+            } catch (error) {
+                console.error("Error fetching ads: ", error);
+            }
+        }
+
+        // Post Ad Function
+        document.getElementById('adForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('adTitle').value;
+            const desc = document.getElementById('adDesc').value;
+            const contact = document.getElementById('adContact').value;
+            const imageFile = document.getElementById('adImage').files[0];
+
+            let base64Image = "";
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onloadend = async function() {
+                    base64Image = reader.result;
+                    await saveToFirebase(title, desc, contact, base64Image);
+                }
+                reader.readAsDataURL(imageFile);
+            } else {
+                await saveToFirebase(title, desc, contact, base64Image);
+            }
+        });
+
+        async function saveToFirebase(title, desc, contact, image) {
+            try {
+                await addDoc(collection(db, "ads"), {
+                    title: title,
+                    desc: desc,
+                    contact: contact,
+                    image: image,
+                    createdAt: Date.now()
+                });
+                document.getElementById('adForm').reset();
+                displayAds();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Failed to publish ad. Make sure Firestore is in Test Mode.");
+            }
+        }
+
+        // Delete Ad Function
+        window.deleteAd = async function(adId) {
+            try {
+                await deleteDoc(doc(db, "ads", adId));
+                displayAds();
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+            }
+        }
+
+        // Admin Functions
+        window.openLoginModal = function() { document.getElementById('loginModal').style.display = 'block'; }
+        window.closeLoginModal = function() { 
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+        window.loginAdmin = function() {
+            const passwordInput = document.getElementById('adminPassword').value;
+            if (passwordInput === "admin123") {
+                window.isAdminLoggedIn = true;
+                document.getElementById('loginNavBtn').style.display = 'none';
+                document.getElementById('logoutNavBtn').style.display = 'block';
+                window.closeLoginModal();
+                displayAds();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        window.logoutAdmin = function() {
+            window.isAdminLoggedIn = false;
+            document.getElementById('loginNavBtn').style.display = 'block';
+            document.getElementById('logoutNavBtn').style.display = 'none';
+            displayAds();
+        }
+
+        // Load Ads on Startup
+        window.onload = displayAds;
+    </script>
 </head>
 <body>
 
     <header>
         <div class="logo">Skokka</div>
         <nav>
-            <button id="loginNavBtn" onclick="openLoginModal()">Admin Login</button>
-            <button id="logoutNavBtn" onclick="logoutAdmin()" style="display:none;">Logout Admin</button>
+            <button id="loginNavBtn" onclick="window.openLoginModal()">Admin Login</button>
+            <button id="logoutNavBtn" onclick="window.logoutAdmin()" style="display:none;">Logout Admin</button>
         </nav>
     </header>
 
     <!-- Admin Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <span class="close" onclick="window.closeLoginModal()">&times;</span>
             <h2>Admin Login</h2>
             <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-            <button onclick="loginAdmin()">Login</button>
+            <button onclick="window.loginAdmin()">Login</button>
             <p id="loginError" style="color:red; display:none;">Incorrect Password!</p>
         </div>
     </div>
 
     <main>
-        <!-- Ad Post Form with Image Upload -->
+        <!-- Ad Post Form -->
         <section class="ad-form-section">
             <h2>Post a New Ad</h2>
             <form id="adForm">
@@ -42,7 +192,6 @@
                 <textarea id="adDesc" placeholder="Ad Description / Details" rows="4" required></textarea>
                 <input type="text" id="adContact" placeholder="Contact Number or Email" required>
                 
-                <!-- ఫోటో సెలెక్ట్ చేయడానికి కొత్త ఆప్షన్ -->
                 <label style="display:block; margin: 15px 0 5px 0; font-weight:600; color:var(--secondary-color); text-align:left;">Upload Ad Image (Optional):</label>
                 <input type="file" id="adImage" accept="image/*" style="background:none; border:none; padding:0;">
                 
@@ -54,11 +203,9 @@
         <section class="ads-display-section">
             <h2>Recent Advertisements</h2>
             <div id="adsContainer">
-                <!-- Ads will load here via JavaScript -->
+                <!-- Ads will load here via JavaScript from Firebase -->
             </div>
         </section>
     </main>
-
-    <script src="app.js"></script>
 </body>
 </html>
